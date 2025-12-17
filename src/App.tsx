@@ -1,6 +1,8 @@
-import Home from "./pages/Home";
+import LoginPage from "./pages/Login/LoginPage";
 import BasicThreadView from "./pages/BasicThreadView";
 import StyledThreadView from "./pages/StyledThreadView";
+import MainPage from "./pages/MainPage/MainPage";
+import CreateUserPage from "./pages/CreateUserPage/CreateUserPage";
 import React from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -22,7 +24,9 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/thread/1" element={<BasicThreadView />} />
                         <Route path="/thread/1/styled" element={<StyledThreadView />} />
-                        <Route path="/" element={<Home />} />
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/main" element={<MainPage />} />
+                        <Route path="/newuser" element={<CreateUserPage />} />
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>
