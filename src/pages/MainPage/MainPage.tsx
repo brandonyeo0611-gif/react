@@ -1,60 +1,37 @@
 /* eslint-disable prettier/prettier */
-import TechIcon from "/Users/brandon06/Desktop/projects/web_forum/react/src/images/Technology.png";
-import AutomotiveIcon from "../../images/Automotive.png";
-import GamesIcon from "../../images/Games.png";
-import MusicIcon from "../../images/Music.png";
-import CultureIcon from "../../images/Culture.png";
-import LifestyleIcon from "../../images/Lifestyle.png";
-import AllIcon from "../../images/All.png";
-import { Avatar, Divider, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import Drawer from '@mui/material/Drawer';
-import React from "react";
 
-const drawerWidth = 240;
+import BasicStack from "./Forums";
+import DrawerLeft from "./DrawerLeft";
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import { Typography, AppBar, Toolbar  } from "@mui/material";
+
+
 // learning to use map to reduce code
-const categories = [
-    { label: 'All', icon: AllIcon},
-    { label: 'Technology', icon: TechIcon },
-    { label: 'Games', icon: GamesIcon },
-    { label: 'Lifestyle', icon: LifestyleIcon },
-    { label: 'Music', icon: MusicIcon },
-    { label: 'Automotive', icon: AutomotiveIcon },
-    { label: 'Culture', icon: CultureIcon }
-]
 
 const MainPage: React.FC = () => {
+    const [category, setCategory] = useState("Technology");
     return (
-        <div>
-            <Drawer sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                '& .MuiDrawer-paper': {
-                    width: drawerWidth,
-                    boxSizing: 'border-box',
-                },
-            }}
-                variant="permanent"
-                anchor="left">
-                <List>
-                    <ListItemButton>
-                        <Avatar></Avatar>
-                    </ListItemButton>
-                </List>
-                <Divider />
-                <List>
-                    {categories.map(({ label, icon }) => (
-                        <ListItem key={label} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <img src={icon} style={{ width: 32, height: 32 }} />
-                                </ListItemIcon>
-                                <ListItemText primary={label} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-            </Drawer>
-        </div>
+        <Box sx ={{display: "flex" }}>
+            <DrawerLeft setCategory={setCategory}>
+
+            </DrawerLeft>
+
+            <Box sx={{ flexGrow: 1 }}>
+    
+            <AppBar position='static'>
+                <Toolbar>
+                    <Typography variant="h6" align='center' component="div" sx={{ flexGrow: 1 }}>
+                        yap
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Box sx={{ p: 2 }}>
+            <BasicStack category={category}></BasicStack>
+            </Box>
+            </Box>
+            </Box>
+
     );
 };
 
