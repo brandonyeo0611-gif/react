@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import TechIcon from "/Users/brandon06/Desktop/projects/web_forum/react/src/images/Technology.png";
-import AutomotiveIcon from "../../images/Automotive.png";
-import GamesIcon from "../../images/Games.png";
-import MusicIcon from "../../images/Music.png";
-import CultureIcon from "../../images/Culture.png";
-import LifestyleIcon from "../../images/Lifestyle.png";
-import AllIcon from "../../images/All.png";
+import AutomotiveIcon from "../../../images/Automotive.png";
+import GamesIcon from "../../../images/Games.png";
+import MusicIcon from "../../../images/Music.png";
+import CultureIcon from "../../../images/Culture.png";
+import LifestyleIcon from "../../../images/Lifestyle.png";
+import AllIcon from "../../../images/All.png";
 import { Toolbar, Avatar, Divider, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import React from "react";

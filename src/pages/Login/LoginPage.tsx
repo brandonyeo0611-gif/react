@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
 
-const LoginPage: React.FC = () => {
-    const [username, setUsername] = useState("");
+type LoginPageProps = {
+    username: string;
+    setUsername: React.Dispatch<React.SetStateAction<string>>;
+};
+const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
     // variables need match with backend data json naming!!
     const navigate = useNavigate();
     // navigate pages in frontend
