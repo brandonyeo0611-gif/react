@@ -62,16 +62,17 @@ const CreatePost: React.FC<CreatePostProps> = ({ username }) => {
                         console.log(content_type);
                         const title = formJson.title;
                         console.log(title);
+                        const token = localStorage.getItem("token");
                         const response = await fetch("http://localhost:8000/posts", {
                             method: "POST",
-                            headers: { "Content-Type": "application/json" }, // sends json code
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code
                             body: JSON.stringify({ title, username, content, content_type }), // stringify the username to send json code, match json backend model
                         });
                         const data = await response.json();
                         if (data.errorCode === 0) {
-                            alert("Login Successful");
+                            alert("Create post successful");
                         } else {
-                            alert("Login Failed: " + data.messages?.[0]); // remember in backend we did the messages so yea
+                            alert("Create Post Failed: " + data.messages?.[0]); // remember in backend we did the messages so yea
                         }
                         handleClose();
                     },

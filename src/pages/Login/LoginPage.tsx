@@ -16,12 +16,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
             headers: { "Content-Type": "application/json" }, // sends json code
             body: JSON.stringify({ username }), // stringify the username to send json code, match json backend model
         });
-        const data = await response.json();
-        if (data.errorCode === 0) {
+        const res = await response.json();
+        const data = res.payload.data;
+        const token = data.RefreshToken;
+        // store the token locally
+        localStorage.setItem("token", token);
+        if (res.errorCode === 0) {
             alert("Login Successful");
             navigate("/main");
         } else {
-            alert("Login Failed: " + data.messages?.[0]); // remember in backend we did the messages so yea
+            alert("Login Failed: " + res.messages?.[0]); // remember in backend we did the messages so yea
         }
     };
     return (
