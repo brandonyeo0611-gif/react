@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import { Typography, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 type Post = {
     post_id: string;
     user_id: number;
@@ -22,6 +22,7 @@ type ForumsProps = {
     category: string;
 };
 export default function BasicStack({ category }: ForumsProps) {
+    const navigate = useNavigate();
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
         ...theme.typography.body2,
@@ -38,6 +39,9 @@ export default function BasicStack({ category }: ForumsProps) {
         setPosts(result.payload.data || []);
         console.log(result.payload.data);
     };
+    const handleClick = (postID: string) => {
+        navigate(`/thread/${postID}`);
+    };
 
     useEffect(() => {
         getforums();
@@ -46,7 +50,7 @@ export default function BasicStack({ category }: ForumsProps) {
         <Box sx={{ width: "flex", maxHeight: "" }}>
             <Stack useFlexGap spacing={3}>
                 {posts.map((post) => (
-                    <Item key={post.post_id}>
+                    <Item key={post.post_id} onClick={() => handleClick(post.post_id)}>
                         <Typography variant="h6">{post.title}</Typography>
                         <Divider sx={{ my: 0.2 }} />
                         <Typography
