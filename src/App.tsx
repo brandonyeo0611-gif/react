@@ -29,7 +29,7 @@ const App: React.FC = () => {
                         <Route path="/" element={<LoginPage username={username} setUsername={setUsername} />} />
                         <Route path="/main" element={<MainPage username={username} />} />
                         <Route path="/newuser" element={<CreateUserPage />} />
-                        <Route path="/posts/:postID" element={<PostPage />} />
+                        <Route path="/thread/:postID" element={<PostPage />} />
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

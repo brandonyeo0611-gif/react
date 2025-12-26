@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import TechIcon from "/Users/brandon06/Desktop/projects/web_forum/react/src/images/Technology.png";
+import TechIcon from "../../../images/Technology.png";
 import AutomotiveIcon from "../../../images/Automotive.png";
 import GamesIcon from "../../../images/Games.png";
 import MusicIcon from "../../../images/Music.png";
