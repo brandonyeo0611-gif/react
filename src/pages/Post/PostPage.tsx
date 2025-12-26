@@ -1,4 +1,5 @@
 import BasicStack from "./components/comments";
+import CreateComment from "./components/CreateComment";
 import TechIcon from "../../images/Technology.png";
 import GamesIcon from "../../images/Games.png";
 import MusicIcon from "../../images/Music.png";
@@ -160,6 +161,21 @@ const PostPage: React.FC = () => {
                                     </Button>
                                 </ButtonGroup>
                             </IconButton>
+                            <Box sx={{ mt: 0.8, ml: 1, backgroundColor: "" }}>
+                                <IconButton
+                                    sx={{
+                                        border: "1px light blue",
+                                        borderRadius: 1,
+                                        width: 40,
+                                        height: 40,
+                                        padding: 0,
+                                    }}
+                                >
+                                    <ButtonGroup>
+                                        <CreateComment post_id={postID}></CreateComment>
+                                    </ButtonGroup>
+                                </IconButton>
+                            </Box>
                         </Box>
                     </Item>
                     <BasicStack postID={postID}></BasicStack>

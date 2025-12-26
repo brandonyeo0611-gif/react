@@ -17,7 +17,8 @@ type BasicStackProps = {
     postID: string | undefined;
 };
 
-export default function BasicStack(postID: BasicStackProps) {
+export default function BasicStack({ postID }: BasicStackProps) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [comments, setComments] = React.useState<Comment[]>([]);
     const getforums = async () => {
         const response = await fetch(`http://localhost:8000/comments?post=${postID}`); // get no need method cause fetch inherently already is get
@@ -33,7 +34,7 @@ export default function BasicStack(postID: BasicStackProps) {
     return (
         <Box sx={{ width: "100%" }}>
             <Stack spacing={2}>
-                <Item>{comments[0].}</Item>
+                <Item></Item>
                 <Item>Item 2</Item>
                 <Item>Item 3</Item>
             </Stack>
