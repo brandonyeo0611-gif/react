@@ -24,6 +24,7 @@ type Comment = {
     user_id: number;
     content: string;
     created_at: string;
+    username: string;
 };
 
 export default function BasicStack({ postID }: BasicStackProps) {
@@ -48,7 +49,7 @@ export default function BasicStack({ postID }: BasicStackProps) {
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Box sx={{ display: "flex" }}>
                                 <Avatar></Avatar>
-                                <Typography sx={{ mt: 1, ml: 2 }}>{c.user_id}</Typography>
+                                <Typography sx={{ mt: 1, ml: 2 }}>{c.username}</Typography>
                             </Box>
                             <Box sx={{ display: "flex" }}>
                                 <Typography sx={{ mt: 1, ml: 2, wordWrap: "break-word", wordBreak: "break-word" }}>
