@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button } from "@mui/material";
+import { Card, TextField, Button, Box, Typography, Link } from "@mui/material";
+import CardContent from "@mui/material/CardContent";
 
 type LoginPageProps = {
     username: string;
@@ -28,15 +29,42 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
             alert("Login Failed: " + res.messages?.[0]); // remember in backend we did the messages so yea
         }
     };
+    const nav = () => {
+        navigate("/newuser");
+    };
     return (
-        <div>
-            <TextField
-                helperText="Please enter your username"
-                label="Name"
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <Button onClick={handleSubmit}>Submit</Button>
-        </div>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "#f5f7fa",
+            }}
+        >
+            <Card variant="outlined">
+                <CardContent>
+                    <Box sx={{ display: "flex" }}>
+                        <Typography variant="h5" sx={{ mb: 5 }}>
+                            Welcome to yap :{")"}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex" }}>
+                        <TextField
+                            helperText="Please enter your username"
+                            label="Name"
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <Button onClick={handleSubmit}>Submit</Button>
+                    </Box>
+                    <Box sx={{ display: "flex" }}>
+                        <Typography sx={{ cursor: "pointer" }} variant="body2">
+                            click<Link onClick={nav}> here</Link> to create new user
+                        </Typography>
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
     );
 };
 

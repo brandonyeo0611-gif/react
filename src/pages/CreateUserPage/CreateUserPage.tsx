@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { TextField, Button } from "@mui/material";
-
+import { TextField, Button, Box, Card, CardContent, Link, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 const CreateUserPage: React.FC = () => {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const handleSubmit = async () => {
         const response = await fetch("http://localhost:8000/users", {
@@ -12,20 +13,50 @@ const CreateUserPage: React.FC = () => {
         const data = await response.json();
         if (data.errorCode === 0) {
             alert("Successfully Created User");
+            navigate("/");
         } else {
             alert("Unable to Create User:" + data.messages?.[0]);
         }
     };
+    const nav = () => {
+        navigate("/login");
+    };
 
     return (
-        <div>
-            <TextField
-                helperText="Enter Desired Username"
-                label="Username"
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <Button onClick={handleSubmit}>Submit</Button>
-        </div>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "#f5f7fa",
+            }}
+        >
+            <Card variant="outlined">
+                <CardContent>
+                    <Box sx={{ display: "flex" }}>
+                        <Typography variant="h5" sx={{ mb: 5 }}>
+                            Welcome to yap :{")"}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex" }}>
+                        <TextField
+                            helperText="Please enter your username"
+                            label="Name"
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <Button sx={{ mt: -2 }} onClick={handleSubmit}>
+                            Submit
+                        </Button>
+                    </Box>
+                    <Box sx={{ display: "flex" }}>
+                        <Typography sx={{ cursor: "pointer" }} variant="body2">
+                            click<Link onClick={nav}> here</Link> to login
+                        </Typography>
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
     );
 };
 
