@@ -6,7 +6,18 @@ import MusicIcon from "../../images/Music.png";
 import CultureIcon from "../../images/Culture.png";
 import LifestyleIcon from "../../images/Lifestyle.png";
 import AutomotiveIcon from "../../images/Automotive.png";
-import { ButtonGroup, Icon, Avatar, Typography, AppBar, Toolbar, IconButton, Button } from "@mui/material";
+import {
+    Container,
+    Divider,
+    ButtonGroup,
+    Icon,
+    Avatar,
+    Typography,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Button,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -101,31 +112,34 @@ const PostPage: React.FC = () => {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <AppBar position="fixed">
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        onClick={() => {
-                            navigate("/main");
-                        }}
-                    >
-                        <ArrowBackIosIcon></ArrowBackIosIcon>
-                    </IconButton>
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            position: "absolute",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                        }}
-                        // make it in the middle
-                    >
-                        yap
-                    </Typography>
-                </Toolbar>
+            <AppBar position="fixed" sx={{ width: "100%" }}>
+                <Container>
+                    <Toolbar>
+                        <IconButton
+                            color="inherit"
+                            onClick={() => {
+                                navigate("/main");
+                            }}
+                            sx={{ ml: -3 }}
+                        >
+                            <ArrowBackIosIcon></ArrowBackIosIcon>
+                        </IconButton>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                position: "absolute",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                            }}
+                            // make it in the middle
+                        >
+                            yap
+                        </Typography>
+                    </Toolbar>
+                </Container>
             </AppBar>
             <Toolbar />
-            <Box>
+            <Box sx={{ mx: "auto", width: "80%" }}>
                 <Stack useFlexGap>
                     <Item>
                         <Box sx={{ display: "flex", marginBottom: 2 }}>
@@ -178,6 +192,7 @@ const PostPage: React.FC = () => {
                             </Box>
                         </Box>
                     </Item>
+                    <Divider sx={{ mb: 3 }}></Divider>
                     <BasicStack postID={postID}></BasicStack>
                 </Stack>
             </Box>
