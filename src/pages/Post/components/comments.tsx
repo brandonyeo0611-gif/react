@@ -59,8 +59,6 @@ export default function BasicStack({ postID }: BasicStackProps) {
                         </Box>
                     </Item>
                 ))}
-                <Item>content</Item>
-                <Item>Item 3</Item>
             </Stack>
         </Box>
     );

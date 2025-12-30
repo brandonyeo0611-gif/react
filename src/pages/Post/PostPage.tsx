@@ -82,17 +82,7 @@ const PostPage: React.FC = () => {
     const [post, setPost] = useState<Post>();
     const [downColor, setDownColor] = useState(false);
     const [upColor, setUpColor] = useState(false);
-    useEffect(() => {
-        const getforums = async () => {
-            const response = await fetch(`http://localhost:8000/posts/${postID}`); // get no need method cause fetch inherently already is get
-            // fetch need
-            const result = await response.json();
-            setPost(result.payload.data);
-            console.log(result.payload.data);
-        };
-        getforums();
-    }, [postID]);
-    if (!post) return <div>Loading post...</div>;
+    const [like, setLike] = useState(0);
     const changeDownvote = () => {
         const vote = downColor ? 0 : -1;
         setDownColor((prev) => !prev);
@@ -109,6 +99,32 @@ const PostPage: React.FC = () => {
         }
         handleLikePost(vote);
     };
+    useEffect(() => {
+        const getforums = async () => {
+            const response = await fetch(`http://localhost:8000/posts/${postID}`); // get no need method cause fetch inherently already is get
+            // fetch need
+            const result = await response.json();
+            setPost(result.payload.data);
+            console.log(result.payload.data);
+        };
+        const getlike = async () => {
+            const response = await fetch(`http://localhost:8000/like/${postID}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code// stringify the username to send json code, match json backend model
+            });
+            const likeValue = await response.json();
+            setLike(likeValue.payload.data);
+            console.log(likeValue.payload.data);
+        };
+        getforums();
+        getlike();
+    }, [postID]);
+    useEffect(() => {
+        setUpColor(like === 1);
+        setDownColor(like === -1); // save the effect of liking/disliking the post
+    }, [like]);
+
+    if (!post) return <div>Loading post...</div>;
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
