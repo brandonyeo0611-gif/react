@@ -3,9 +3,9 @@
 import BasicStack from "./components/Forums";
 import DrawerLeft from "./components/DrawerLeft";
 import CreatePost from "./components/CreatePost";
+import PrimarySearchAppBar from "./components/SearchBar";
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { Typography, AppBar, Toolbar  } from "@mui/material";
 
 type MainPageProps = {
   username: string;
@@ -22,13 +22,9 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
             </DrawerLeft>
             <Box sx={{ flexGrow: 1 }}>
 
-            <AppBar position='static'>
-                <Toolbar>
-                    <Typography variant="h6" align='center' component="div" sx={{ flexGrow: 1 }}>
-                        yap
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+            <PrimarySearchAppBar>
+                
+            </PrimarySearchAppBar>
             <Box sx={{ p: 2 }}>
             <BasicStack category={category}></BasicStack>
             </Box>
