@@ -53,7 +53,7 @@ const CreateComment: React.FC<CreateCommentProps> = ({ post_id }) => {
                         const formData = new FormData(event.currentTarget);
                         const formJson = Object.fromEntries(formData.entries());
                         const content = formJson.content;
-                        const token = localStorage.getItem("token");
+                        const token = localStorage.getItem("accesstoken");
                         const response = await fetch("http://localhost:8000/comments", {
                             method: "POST",
                             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code

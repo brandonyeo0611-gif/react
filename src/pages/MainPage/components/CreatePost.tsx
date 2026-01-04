@@ -62,7 +62,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ username }) => {
                         console.log(content_type);
                         const title = formJson.title;
                         console.log(title);
-                        const token = localStorage.getItem("token");
+                        const token = localStorage.getItem("accesstoken");
                         const response = await fetch("http://localhost:8000/posts", {
                             method: "POST",
                             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code

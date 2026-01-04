@@ -6,6 +6,7 @@ import MusicIcon from "../../images/Music.png";
 import CultureIcon from "../../images/Culture.png";
 import LifestyleIcon from "../../images/Lifestyle.png";
 import AutomotiveIcon from "../../images/Automotive.png";
+import { RefreshAccessToken } from "../../components/RenewAccessToken";
 import {
     Container,
     Divider,
@@ -125,6 +126,18 @@ const PostPage: React.FC = () => {
     }, [like]);
 
     if (!post) return <div>Loading post...</div>;
+    useEffect(() => {
+        const refresh = async () => {
+            const refreshToken = localStorage.getItem("refreshtoken");
+            if (!refreshToken) {
+                navigate("/"); // redirect if no refresh token
+                return;
+            }
+            const AccessToken = await RefreshAccessToken(refreshToken);
+            localStorage.setItem("accesstoken", AccessToken);
+        };
+        refresh();
+    }, []);
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>

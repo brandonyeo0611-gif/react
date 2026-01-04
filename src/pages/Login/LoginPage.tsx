@@ -1,4 +1,5 @@
-import React from "react";
+import { RefreshAccessToken } from "../../components/RenewAccessToken";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, TextField, Button, Box, Typography, Link } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
@@ -19,9 +20,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
         });
         const res = await response.json();
         const data = res.payload.data;
-        const token = data.RefreshToken;
+        const refreshToken = data.RefreshToken;
         // store the token locally
-        localStorage.setItem("token", token);
+        const accessToken = data.AccessToken;
+        localStorage.setItem("refreshtoken", refreshToken);
+        localStorage.setItem("accesstoken", accessToken);
         if (res.errorCode === 0) {
             alert("Login Successful");
             navigate("/main");
@@ -32,6 +35,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
     const nav = () => {
         navigate("/newuser");
     };
+    useEffect(() => {
+        const refresh = async () => {
+            const refreshToken = localStorage.getItem("refreshtoken");
+            if (!refreshToken) {
+                navigate("/"); // redirect if no refresh token
+                return;
+            }
+            const AccessToken = await RefreshAccessToken(refreshToken);
+            localStorage.setItem("accesstoken", AccessToken);
+            if (AccessToken) {
+                navigate("/main");
+            }
+        };
+        refresh();
+    }, []);
     return (
         <Box
             sx={{
