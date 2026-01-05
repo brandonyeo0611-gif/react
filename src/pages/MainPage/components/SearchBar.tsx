@@ -87,6 +87,38 @@ export default function PrimarySearchAppBar() {
         localStorage.removeItem("accesstoken");
         navigate("/");
     };
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (!file) return;
+
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "YOUR_UPLOAD_PRESET");
+        data.append("cloud_name", "ds9ctxlri");
+        const res = await fetch("https://api.cloudinary.com/v1_1/ds9ctxlri/image/upload", {
+            method: "POST",
+            body: data,
+        });
+        const cloudData = await res.json();
+        const profile_url = cloudData.secure_url;
+
+        const response = await fetch("http://localhost:8000/users/profile_pic", {
+            method: "PUT", // sends json code
+            body: JSON.stringify({ profile_url }), // stringify the username to send json code, match json backend model
+        });
+        const Data = await response.json();
+        if (Data.errorCode != 0) {
+            alert("fail to update profile picture");
+        } else {
+            alert("successfully change profile picture");
+        }
+    };
+    const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+    const handleClickChangeProfilePic = () => {
+        fileInputRef.current?.click(); // programmatically open file picker
+    };
 
     const menuId = "primary-search-account-menu";
     const renderMenu = (
@@ -107,6 +139,8 @@ export default function PrimarySearchAppBar() {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleClickChangeProfilePic}>Change Profile Pic</MenuItem>
+            <input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload}></input>
             <MenuItem></MenuItem>
         </Menu>
     );
