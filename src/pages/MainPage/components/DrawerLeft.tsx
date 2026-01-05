@@ -6,7 +6,7 @@ import MusicIcon from "../../../images/Music.png";
 import CultureIcon from "../../../images/Culture.png";
 import LifestyleIcon from "../../../images/Lifestyle.png";
 import AllIcon from "../../../images/All.png";
-import { Toolbar, Avatar, Divider, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Toolbar, Divider, List, ListItemButton, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import React from "react";
 
@@ -41,9 +41,6 @@ export default function DrawerLeft({setCategory}: DrawerLeftProps) {
             anchor="left"
         >
             <Toolbar>
-                <ListItemButton>
-                    <Avatar></Avatar>
-                </ListItemButton>
             </Toolbar>
             <Divider />
             <List>

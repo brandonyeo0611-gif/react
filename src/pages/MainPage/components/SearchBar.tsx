@@ -1,3 +1,5 @@
+import { GetProfilePic } from "../../../components/GetProfilePic";
+import { RefreshAccessToken } from "../../../components/RenewAccessToken";
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -17,6 +19,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -58,10 +61,29 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
+    const [profileUrl, setProfileUrl] = React.useState<string | null>(null);
+    const [accessToken, setAccessToken] = React.useState("");
+    useEffect(() => {
+        const fetchProfile = async () => {
+            let token = localStorage.getItem("accesstoken");
+            const refreshToken = localStorage.getItem("refreshtoken");
+            if (!token && refreshToken) {
+                token = await RefreshAccessToken(refreshToken);
+            }
+            if (!token) {
+                console.error("No valid token found!");
+                return;
+            }
+            setAccessToken(token);
+            const profile_url = await GetProfilePic(token);
+            setProfileUrl(profile_url);
+        };
+        fetchProfile();
+    }, []);
+
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -94,7 +116,7 @@ export default function PrimarySearchAppBar() {
 
         const data = new FormData();
         data.append("file", file);
-        data.append("upload_preset", "YOUR_UPLOAD_PRESET");
+        data.append("upload_preset", "profile_picture");
         data.append("cloud_name", "ds9ctxlri");
         const res = await fetch("https://api.cloudinary.com/v1_1/ds9ctxlri/image/upload", {
             method: "POST",
@@ -105,7 +127,8 @@ export default function PrimarySearchAppBar() {
 
         const response = await fetch("http://localhost:8000/users/profile_pic", {
             method: "PUT", // sends json code
-            body: JSON.stringify({ profile_url }), // stringify the username to send json code, match json backend model
+            body: JSON.stringify({ profile_url }),
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` }, // stringify the username to send json code, match json backend model
         });
         const Data = await response.json();
         if (Data.errorCode != 0) {
@@ -186,7 +209,20 @@ export default function PrimarySearchAppBar() {
                     aria-haspopup="true"
                     color="inherit"
                 >
-                    <AccountCircle />
+                    {profileUrl ? (
+                        <img
+                            src={profileUrl}
+                            alt="profile"
+                            style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                            }}
+                        />
+                    ) : (
+                        <AccountCircle />
+                    )}
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
@@ -242,7 +278,20 @@ export default function PrimarySearchAppBar() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            <AccountCircle />
+                            {profileUrl ? (
+                                <img
+                                    src={profileUrl}
+                                    alt="profile"
+                                    style={{
+                                        width: 32,
+                                        height: 32,
+                                        borderRadius: "50%",
+                                        objectFit: "cover",
+                                    }}
+                                />
+                            ) : (
+                                <AccountCircle />
+                            )}
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: "flex", md: "none" } }}>
