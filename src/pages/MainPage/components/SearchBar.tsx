@@ -15,7 +15,8 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-
+import { Logout } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -57,6 +58,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -80,6 +82,12 @@ export default function PrimarySearchAppBar() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const handleLogOut = () => {
+        localStorage.removeItem("refreshtoken");
+        localStorage.removeItem("accesstoken");
+        navigate("/");
+    };
+
     const menuId = "primary-search-account-menu";
     const renderMenu = (
         <Menu
@@ -99,6 +107,7 @@ export default function PrimarySearchAppBar() {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem></MenuItem>
         </Menu>
     );
 
@@ -146,6 +155,18 @@ export default function PrimarySearchAppBar() {
                     <AccountCircle />
                 </IconButton>
                 <p>Profile</p>
+            </MenuItem>
+            <MenuItem onClick={handleLogOut}>
+                <IconButton
+                    size="large"
+                    aria-label="logout"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                >
+                    <Logout></Logout>
+                </IconButton>
+                <p>Logout</p>
             </MenuItem>
         </Menu>
     );
