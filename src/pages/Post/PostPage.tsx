@@ -7,6 +7,7 @@ import CultureIcon from "../../images/Culture.png";
 import LifestyleIcon from "../../images/Lifestyle.png";
 import AutomotiveIcon from "../../images/Automotive.png";
 import { RefreshAccessToken } from "../../components/RenewAccessToken";
+import { GetProfilePic } from "../../components/GetProfilePic";
 import {
     Container,
     Divider,
@@ -56,6 +57,21 @@ const renderSwitch = (param: string) => {
             return CultureIcon;
     }
 };
+const Avatars: React.FC<{ username: string }> = ({ username }) => {
+    const [profileUrl, setProfileUrl] = useState<string | null>(null);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const profile_url = await GetProfilePic(username);
+            setProfileUrl(profile_url);
+        };
+        fetchProfile();
+    }, [username]);
+    console.log(profileUrl);
+    if (!profileUrl) {
+        return <Avatar></Avatar>;
+    }
+    return <Avatar src={profileUrl}></Avatar>;
+};
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -67,7 +83,7 @@ const PostPage: React.FC = () => {
     const navigate = useNavigate();
     const { postID } = useParams<{ postID: string }>();
     const post_id = postID;
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accesstoken");
     const handleLikePost = async (likeValue: number) => {
         // using an argument reduces the need to useState to control the state
         const response = await fetch("http://localhost:8000/posts", {
@@ -84,6 +100,18 @@ const PostPage: React.FC = () => {
     const [downColor, setDownColor] = useState(false);
     const [upColor, setUpColor] = useState(false);
     const [like, setLike] = useState(0);
+    useEffect(() => {
+        const refresh = async () => {
+            const refreshToken = localStorage.getItem("refreshtoken");
+            if (!refreshToken) {
+                navigate("/"); // redirect if no refresh token
+                return;
+            }
+            const AccessToken = await RefreshAccessToken(refreshToken);
+            localStorage.setItem("accesstoken", AccessToken);
+        };
+        refresh();
+    }, []);
     const changeDownvote = () => {
         const vote = downColor ? 0 : -1;
         setDownColor((prev) => !prev);
@@ -126,18 +154,6 @@ const PostPage: React.FC = () => {
     }, [like]);
 
     if (!post) return <div>Loading post...</div>;
-    useEffect(() => {
-        const refresh = async () => {
-            const refreshToken = localStorage.getItem("refreshtoken");
-            if (!refreshToken) {
-                navigate("/"); // redirect if no refresh token
-                return;
-            }
-            const AccessToken = await RefreshAccessToken(refreshToken);
-            localStorage.setItem("accesstoken", AccessToken);
-        };
-        refresh();
-    }, []);
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -172,7 +188,7 @@ const PostPage: React.FC = () => {
                 <Stack useFlexGap>
                     <Item>
                         <Box sx={{ display: "flex", marginBottom: 2 }}>
-                            <Avatar></Avatar>
+                            <Avatars username={post.username}></Avatars>
                             <Typography variant="body1" mt={2} position="static" sx={{ marginLeft: 1 }}>
                                 {post.username}
                             </Typography>
@@ -192,12 +208,13 @@ const PostPage: React.FC = () => {
                             <IconButton disableRipple>
                                 <ButtonGroup>
                                     <Button
+                                        type="button"
                                         onClick={changeUpvote}
                                         sx={{ color: upColor ? "success.main" : "action.disabled" }}
                                     >
                                         <ThumbUpIcon></ThumbUpIcon>
                                     </Button>
-                                    <Button onClick={changeDownvote}>
+                                    <Button type="button" onClick={changeDownvote}>
                                         <ThumbDownAltIcon
                                             sx={{ color: downColor ? "red" : "action.disabled" }}
                                         ></ThumbDownAltIcon>
@@ -205,19 +222,7 @@ const PostPage: React.FC = () => {
                                 </ButtonGroup>
                             </IconButton>
                             <Box sx={{ mt: 0.8, ml: 1, backgroundColor: "" }}>
-                                <IconButton
-                                    sx={{
-                                        border: "1px light blue",
-                                        borderRadius: 1,
-                                        width: 40,
-                                        height: 40,
-                                        padding: 0,
-                                    }}
-                                >
-                                    <ButtonGroup>
-                                        <CreateComment post_id={postID}></CreateComment>
-                                    </ButtonGroup>
-                                </IconButton>
+                                <CreateComment post_id={postID}></CreateComment>
                             </Box>
                         </Box>
                     </Item>

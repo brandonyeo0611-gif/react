@@ -14,6 +14,7 @@ type MainPageProps = {
 // learning to use map to reduce code
 
 const MainPage: React.FC<MainPageProps> = ({ username }) => {
+    console.log(username)
     const navigate = useNavigate()
     const [category, setCategory] = useState("Technology");
     const refreshToken = localStorage.getItem("refreshtoken")
@@ -41,7 +42,7 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
             </DrawerLeft>
             <Box sx={{ flexGrow: 1 }}>
 
-                <PrimarySearchAppBar>
+                <PrimarySearchAppBar username={username}>
 
                 </PrimarySearchAppBar>
                 <Box sx={{ p: 2 }}>

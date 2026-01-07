@@ -1,9 +1,10 @@
+import { GetProfilePic } from "../../../components/GetProfilePic";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Typography, Avatar } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -27,6 +28,20 @@ type Comment = {
     username: string;
 };
 
+const Avatars: React.FC<{ username: string }> = ({ username }) => {
+    const [profileUrl, setProfileUrl] = useState<string | null>(null);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const profile_url = await GetProfilePic(username);
+            setProfileUrl(profile_url);
+        };
+        fetchProfile();
+    }, [username]);
+    if (!profileUrl) {
+        return <Avatar></Avatar>;
+    }
+    return <Avatar src={profileUrl}></Avatar>;
+};
 export default function BasicStack({ postID }: BasicStackProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [comments, setComments] = React.useState<Comment[]>([]);
@@ -48,7 +63,7 @@ export default function BasicStack({ postID }: BasicStackProps) {
                     <Item key={c.comment_id}>
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Box sx={{ display: "flex" }}>
-                                <Avatar></Avatar>
+                                <Avatars username={c.username}></Avatars>
                                 <Typography sx={{ mt: 1, ml: 2 }}>{c.username}</Typography>
                             </Box>
                             <Box sx={{ display: "flex" }}>

@@ -27,6 +27,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
         localStorage.setItem("accesstoken", accessToken);
         if (res.errorCode === 0) {
             alert("Login Successful");
+            setUsername(username);
             navigate("/main");
         } else {
             alert("Login Failed: " + res.messages?.[0]); // remember in backend we did the messages so yea
@@ -69,6 +70,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
                     </Box>
                     <Box sx={{ display: "flex" }}>
                         <TextField
+                            value={username}
                             helperText="Please enter your username"
                             label="Name"
                             onChange={(e) => setUsername(e.target.value)}

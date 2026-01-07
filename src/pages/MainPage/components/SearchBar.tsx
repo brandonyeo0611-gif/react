@@ -1,5 +1,4 @@
 import { GetProfilePic } from "../../../components/GetProfilePic";
-import { RefreshAccessToken } from "../../../components/RenewAccessToken";
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -59,23 +58,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         },
     },
 }));
-
-export default function PrimarySearchAppBar() {
+type SearchAppBarProps = {
+    username: string;
+};
+export default function PrimarySearchAppBar({ username }: SearchAppBarProps) {
     const [profileUrl, setProfileUrl] = React.useState<string | null>(null);
-    const [accessToken, setAccessToken] = React.useState("");
     useEffect(() => {
         const fetchProfile = async () => {
-            let token = localStorage.getItem("accesstoken");
-            const refreshToken = localStorage.getItem("refreshtoken");
-            if (!token && refreshToken) {
-                token = await RefreshAccessToken(refreshToken);
-            }
-            if (!token) {
-                console.error("No valid token found!");
-                return;
-            }
-            setAccessToken(token);
-            const profile_url = await GetProfilePic(token);
+            const profile_url = await GetProfilePic(username);
             setProfileUrl(profile_url);
         };
         fetchProfile();
@@ -128,7 +118,7 @@ export default function PrimarySearchAppBar() {
         const response = await fetch("http://localhost:8000/users/profile_pic", {
             method: "PUT", // sends json code
             body: JSON.stringify({ profile_url }),
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` }, // stringify the username to send json code, match json backend model
+            headers: { "Content-Type": "application/json" }, // stringify the username to send json code, match json backend model
         });
         const Data = await response.json();
         if (Data.errorCode != 0) {

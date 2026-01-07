@@ -1,7 +1,7 @@
-export async function GetProfilePic(AccessToken: string) {
-    const response = await fetch("http://localhost:8000/users/profile_pic", {
+export async function GetProfilePic(username: string) {
+    const response = await fetch(`http://localhost:8000/users/profile_pic?username=${username}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${AccessToken}` },
+        headers: { "Content-Type": "application/json" },
     });
     const res = await response.json();
     if (res.errorCode === 5000) {
