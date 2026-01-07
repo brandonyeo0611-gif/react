@@ -59,18 +59,36 @@ const renderSwitch = (param: string) => {
 };
 const Avatars: React.FC<{ username: string }> = ({ username }) => {
     const [profileUrl, setProfileUrl] = useState<string | null>(null);
+    const [retry, setRetry] = useState(0);
+    const [fail, setFail] = useState(false);
     useEffect(() => {
         const fetchProfile = async () => {
-            const profile_url = await GetProfilePic(username);
-            setProfileUrl(profile_url);
+            try {
+                const profile_url = await GetProfilePic(username);
+                if (typeof profile_url !== "string") {
+                    throw new Error();
+                }
+
+                if (typeof profile_url === "string") {
+                    setProfileUrl(profile_url);
+                }
+            } catch (err) {
+                if (retry < 5) {
+                    setRetry((prev) => prev + 1);
+                } else {
+                    setFail(true);
+                }
+            }
         };
         fetchProfile();
-    }, [username]);
-    console.log(profileUrl);
-    if (!profileUrl) {
+    }, [username, retry]);
+
+    if (fail) {
         return <Avatar></Avatar>;
     }
-    return <Avatar src={profileUrl}></Avatar>;
+    if (profileUrl) {
+        return <Avatar src={profileUrl}></Avatar>;
+    }
 };
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -80,10 +98,11 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 const PostPage: React.FC = () => {
+    const [fail, setFail] = useState(false);
     const navigate = useNavigate();
     const { postID } = useParams<{ postID: string }>();
     const post_id = postID;
-    const token = localStorage.getItem("accesstoken");
+    const [token, setToken] = useState<string | null>(null);
     const handleLikePost = async (likeValue: number) => {
         // using an argument reduces the need to useState to control the state
         const response = await fetch("http://localhost:8000/posts", {
@@ -100,18 +119,44 @@ const PostPage: React.FC = () => {
     const [downColor, setDownColor] = useState(false);
     const [upColor, setUpColor] = useState(false);
     const [like, setLike] = useState(0);
+    const [refreshRetry, setRefreshRetry] = useState(0);
     useEffect(() => {
         const refresh = async () => {
-            const refreshToken = localStorage.getItem("refreshtoken");
-            if (!refreshToken) {
-                navigate("/"); // redirect if no refresh token
-                return;
+            try {
+                const refreshToken = localStorage.getItem("refreshtoken");
+                if (!refreshToken) {
+                    navigate("/"); // redirect if no refresh token
+                    return;
+                }
+                const AccessToken = await RefreshAccessToken(refreshToken);
+                localStorage.setItem("accesstoken", AccessToken);
+                setToken(AccessToken);
+                const [postResponse, likeResponse] = await Promise.all([
+                    fetch(`http://localhost:8000/posts/${postID}`),
+                    fetch(`http://localhost:8000/like/${postID}`, {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${AccessToken}` }, // sends json code// stringify the username to send json code, match json backend model
+                    }),
+                ]);
+                const post = await postResponse.json();
+                setPost(post.payload.data);
+                const likeValue = await likeResponse.json();
+                setLike(likeValue.payload.data);
+                if (post.errorCode != 0 || likeValue.errorCode != 0) {
+                    throw new Error();
+                }
+                console.log(likeValue.payload.data);
+            } catch (err) {
+                if (refreshRetry < 5) {
+                    setRefreshRetry((prev) => prev + 1);
+                } else {
+                    setFail(true);
+                }
             }
-            const AccessToken = await RefreshAccessToken(refreshToken);
-            localStorage.setItem("accesstoken", AccessToken);
         };
+
         refresh();
-    }, []);
+    }, [refreshRetry, postID]);
     const changeDownvote = () => {
         const vote = downColor ? 0 : -1;
         setDownColor((prev) => !prev);
@@ -129,109 +174,91 @@ const PostPage: React.FC = () => {
         handleLikePost(vote);
     };
     useEffect(() => {
-        const getforums = async () => {
-            const response = await fetch(`http://localhost:8000/posts/${postID}`); // get no need method cause fetch inherently already is get
-            // fetch need
-            const result = await response.json();
-            setPost(result.payload.data);
-            console.log(result.payload.data);
-        };
-        const getlike = async () => {
-            const response = await fetch(`http://localhost:8000/like/${postID}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code// stringify the username to send json code, match json backend model
-            });
-            const likeValue = await response.json();
-            setLike(likeValue.payload.data);
-            console.log(likeValue.payload.data);
-        };
-        getforums();
-        getlike();
-    }, [postID]);
-    useEffect(() => {
         setUpColor(like === 1);
         setDownColor(like === -1); // save the effect of liking/disliking the post
     }, [like]);
-
-    if (!post) return <div>Loading post...</div>;
-
-    return (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <AppBar position="fixed" sx={{ width: "100%" }}>
-                <Container>
-                    <Toolbar>
-                        <IconButton
-                            color="inherit"
-                            onClick={() => {
-                                navigate("/main");
-                            }}
-                            sx={{ ml: -3 }}
-                        >
-                            <ArrowBackIosIcon></ArrowBackIosIcon>
-                        </IconButton>
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                position: "absolute",
-                                left: "50%",
-                                transform: "translateX(-50%)",
-                            }}
-                            // make it in the middle
-                        >
-                            yap
-                        </Typography>
-                    </Toolbar>
-                </Container>
-            </AppBar>
-            <Toolbar />
-            <Box sx={{ mx: "auto", width: "80%" }}>
-                <Stack useFlexGap>
-                    <Item>
-                        <Box sx={{ display: "flex", marginBottom: 2 }}>
-                            <Avatars username={post.username}></Avatars>
-                            <Typography variant="body1" mt={2} position="static" sx={{ marginLeft: 1 }}>
-                                {post.username}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ display: "flex", marginBottom: 1 }}>
-                            <Typography sx={{ display: "flex" }} variant="subtitle1" fontWeight="bold">
-                                {post.title}
-                            </Typography>
-                            <Icon sx={{ marginLeft: 1 }}>
-                                <img src={renderSwitch(post.content_type)} alt={post.content_type} width={32} />
-                            </Icon>
-                        </Box>
-                        <Box sx={{ display: "flex" }}>
-                            <Typography variant="body1">{post.content}</Typography>
-                        </Box>
-                        <Box sx={{ display: "flex" }}>
-                            <IconButton disableRipple>
-                                <ButtonGroup>
-                                    <Button
-                                        type="button"
-                                        onClick={changeUpvote}
-                                        sx={{ color: upColor ? "success.main" : "action.disabled" }}
-                                    >
-                                        <ThumbUpIcon></ThumbUpIcon>
-                                    </Button>
-                                    <Button type="button" onClick={changeDownvote}>
-                                        <ThumbDownAltIcon
-                                            sx={{ color: downColor ? "red" : "action.disabled" }}
-                                        ></ThumbDownAltIcon>
-                                    </Button>
-                                </ButtonGroup>
+    if (fail) {
+        return <div>fail to fetch post...</div>;
+    }
+    if (post) {
+        return (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <AppBar position="fixed" sx={{ width: "100%" }}>
+                    <Container>
+                        <Toolbar>
+                            <IconButton
+                                color="inherit"
+                                onClick={() => {
+                                    navigate("/main");
+                                }}
+                                sx={{ ml: -3 }}
+                            >
+                                <ArrowBackIosIcon></ArrowBackIosIcon>
                             </IconButton>
-                            <Box sx={{ mt: 0.8, ml: 1, backgroundColor: "" }}>
-                                <CreateComment post_id={postID}></CreateComment>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    position: "absolute",
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                }}
+                                // make it in the middle
+                            >
+                                yap
+                            </Typography>
+                        </Toolbar>
+                    </Container>
+                </AppBar>
+                <Toolbar />
+                <Box sx={{ mx: "auto", width: "80%" }}>
+                    <Stack useFlexGap>
+                        <Item>
+                            <Box sx={{ display: "flex", marginBottom: 2 }}>
+                                <Avatars username={post.username}></Avatars>
+                                <Typography variant="body1" mt={2} position="static" sx={{ marginLeft: 1 }}>
+                                    {post.username}
+                                </Typography>
                             </Box>
-                        </Box>
-                    </Item>
-                    <Divider sx={{ mb: 3 }}></Divider>
-                    <BasicStack postID={postID}></BasicStack>
-                </Stack>
+                            <Box sx={{ display: "flex", marginBottom: 1 }}>
+                                <Typography sx={{ display: "flex" }} variant="subtitle1" fontWeight="bold">
+                                    {post.title}
+                                </Typography>
+                                <Icon sx={{ marginLeft: 1 }}>
+                                    <img src={renderSwitch(post.content_type)} alt={post.content_type} width={32} />
+                                </Icon>
+                            </Box>
+                            <Box sx={{ display: "flex" }}>
+                                <Typography variant="body1">{post.content}</Typography>
+                            </Box>
+                            <Box sx={{ display: "flex" }}>
+                                <IconButton disableRipple>
+                                    <ButtonGroup>
+                                        <Button
+                                            type="button"
+                                            onClick={changeUpvote}
+                                            sx={{ color: upColor ? "success.main" : "action.disabled" }}
+                                        >
+                                            <ThumbUpIcon></ThumbUpIcon>
+                                        </Button>
+                                        <Button type="button" onClick={changeDownvote}>
+                                            <ThumbDownAltIcon
+                                                sx={{ color: downColor ? "red" : "action.disabled" }}
+                                            ></ThumbDownAltIcon>
+                                        </Button>
+                                    </ButtonGroup>
+                                </IconButton>
+                                <Box sx={{ mt: 0.8, ml: 1, backgroundColor: "" }}>
+                                    <CreateComment post_id={postID}></CreateComment>
+                                </Box>
+                            </Box>
+                        </Item>
+                        <Divider sx={{ mb: 3 }}></Divider>
+                        <BasicStack postID={postID}></BasicStack>
+                    </Stack>
+                </Box>
             </Box>
-        </Box>
-    );
+        );
+    }
 };
 
 export default PostPage;

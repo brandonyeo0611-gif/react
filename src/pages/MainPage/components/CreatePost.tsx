@@ -123,6 +123,9 @@ const CreatePost: React.FC<CreatePostProps> = ({ username }) => {
                         fullWidth
                         variant="standard"
                         sx={{ p: 1 }}
+                        multiline
+                        minRows={5}
+                        maxRows={5}
                     />
                 </DialogContent>
                 <DialogActions>
