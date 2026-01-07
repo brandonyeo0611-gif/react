@@ -30,32 +30,59 @@ type Comment = {
 
 const Avatars: React.FC<{ username: string }> = ({ username }) => {
     const [profileUrl, setProfileUrl] = useState<string | null>(null);
+    const [retry, setRetry] = useState(0);
+    const [fail, setFail] = useState(false);
     useEffect(() => {
         const fetchProfile = async () => {
-            const profile_url = await GetProfilePic(username);
-            setProfileUrl(profile_url);
+            try {
+                const profile_url = await GetProfilePic(username);
+                if (typeof profile_url !== "string") {
+                    throw new Error();
+                }
+
+                if (typeof profile_url === "string") {
+                    setProfileUrl(profile_url);
+                }
+            } catch (err) {
+                if (retry < 5) {
+                    setRetry((prev) => prev + 1);
+                } else {
+                    setFail(true);
+                }
+            }
         };
         fetchProfile();
-    }, [username]);
-    if (!profileUrl) {
+    }, [username, retry]);
+
+    if (fail) {
         return <Avatar></Avatar>;
     }
-    return <Avatar src={profileUrl}></Avatar>;
+    if (profileUrl) {
+        return <Avatar src={profileUrl}></Avatar>;
+    }
 };
 export default function BasicStack({ postID }: BasicStackProps) {
+    const [retry, setRetry] = useState(true);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [comments, setComments] = React.useState<Comment[]>([]);
     const getComments = async () => {
-        const response = await fetch(`http://localhost:8000/comments?post=${postID}`); // get no need method cause fetch inherently already is get
-        // fetch need
-        const result = await response.json();
-        setComments(result.payload.data || []);
-        console.log(result.payload.data);
+        try {
+            const response = await fetch(`http://localhost:8000/comments?post=${postID}`); // get no need method cause fetch inherently already is get
+            // fetch need
+            const result = await response.json();
+            if (result.errorCode != 0) {
+                throw new Error();
+            }
+            setComments(result.payload.data || []);
+            console.log(result.payload.data);
+        } catch (err) {
+            setRetry((prev) => !prev);
+        }
     };
 
     useEffect(() => {
         getComments();
-    }, [postID]);
+    }, [postID, retry]);
     return (
         <Box sx={{ width: "100%" }}>
             <Stack spacing={2}>

@@ -120,6 +120,7 @@ const PostPage: React.FC = () => {
     const [upColor, setUpColor] = useState(false);
     const [like, setLike] = useState(0);
     const [refreshRetry, setRefreshRetry] = useState(0);
+    const [fetchedLike, setFetchedLike] = useState(false);
     useEffect(() => {
         const refresh = async () => {
             try {
@@ -139,15 +140,17 @@ const PostPage: React.FC = () => {
                     }),
                 ]);
                 const post = await postResponse.json();
-                setPost(post.payload.data);
                 const likeValue = await likeResponse.json();
-                setLike(likeValue.payload.data);
                 if (post.errorCode != 0 || likeValue.errorCode != 0) {
                     throw new Error();
                 }
+                setPost(post.payload.data);
+                setLike(likeValue.payload.data);
+
                 console.log(likeValue.payload.data);
+                setFetchedLike(true);
             } catch (err) {
-                if (refreshRetry < 5) {
+                if (refreshRetry < 20) {
                     setRefreshRetry((prev) => prev + 1);
                 } else {
                     setFail(true);
@@ -178,9 +181,22 @@ const PostPage: React.FC = () => {
         setDownColor(like === -1); // save the effect of liking/disliking the post
     }, [like]);
     if (fail) {
-        return <div>fail to fetch post...</div>;
+        return (
+            <Typography
+                variant="h3"
+                sx={{
+                    display: "flex",
+                    justifyContent: "center", // horizontal center
+                    alignItems: "center", // vertical center
+                    height: "100vh", // full viewport height
+                    width: "100%",
+                }}
+            >
+                Failed to fetch post...
+            </Typography>
+        );
     }
-    if (post) {
+    if (post && fetchedLike) {
         return (
             <Box sx={{ display: "flex", flexDirection: "column" }}>
                 <AppBar position="fixed" sx={{ width: "100%" }}>
@@ -259,6 +275,20 @@ const PostPage: React.FC = () => {
             </Box>
         );
     }
+    return (
+        <Typography
+            variant="h3"
+            sx={{
+                display: "flex",
+                justifyContent: "center", // horizontal center
+                alignItems: "center", // vertical center
+                height: "100vh", // full viewport height
+                width: "100%",
+            }}
+        >
+            Loading post...
+        </Typography>
+    );
 };
 
 export default PostPage;

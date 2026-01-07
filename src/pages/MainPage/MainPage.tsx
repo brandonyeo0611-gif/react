@@ -42,7 +42,7 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
             </DrawerLeft>
             <Box sx={{ flexGrow: 1 }}>
 
-                <PrimarySearchAppBar username={username}>
+                <PrimarySearchAppBar>
 
                 </PrimarySearchAppBar>
                 <Box sx={{ p: 2 }}>

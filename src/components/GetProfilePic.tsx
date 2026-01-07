@@ -14,7 +14,7 @@ export async function GetProfilePic(username: string) {
     }
     if (res.errorCode != 0) {
         console.log(5002);
-        return;
+        return 5002;
     }
     const data = res.payload.data.profile_url;
     console.log(data);

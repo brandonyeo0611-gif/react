@@ -25,6 +25,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
         const accessToken = data.AccessToken;
         localStorage.setItem("refreshtoken", refreshToken);
         localStorage.setItem("accesstoken", accessToken);
+        localStorage.setItem("username", username);
         if (res.errorCode === 0) {
             alert("Login Successful");
             setUsername(username);

@@ -18,7 +18,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -58,18 +58,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         },
     },
 }));
-type SearchAppBarProps = {
-    username: string;
-};
-export default function PrimarySearchAppBar({ username }: SearchAppBarProps) {
+
+export default function PrimarySearchAppBar() {
     const [profileUrl, setProfileUrl] = React.useState<string | null>(null);
+    const [retry, setRetry] = useState(true);
     useEffect(() => {
         const fetchProfile = async () => {
-            const profile_url = await GetProfilePic(username);
-            setProfileUrl(profile_url);
+            try {
+                const username = localStorage.getItem("username");
+                if (username) {
+                    const profile_url = await GetProfilePic(username);
+                    if (typeof profile_url !== "string") {
+                        throw new Error();
+                    }
+                    setProfileUrl(profile_url);
+                }
+            } catch (err) {
+                setRetry((prev) => !prev);
+            }
         };
         fetchProfile();
-    }, []);
+    }, [retry]);
 
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

@@ -31,7 +31,24 @@ export default function BasicStack({ category }: ForumsProps) {
         color: theme.palette.text.secondary,
     }));
     const [posts, setPosts] = useState<Post[]>([]);
-
+    const [retry, setRetry] = useState(false);
+    useEffect(() => {
+        const getforums = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/posts?category=${category}`); // get no need method cause fetch inherently already is get
+                // fetch need
+                const result = await response.json();
+                if (result.errorCode != 0) {
+                    throw new Error();
+                }
+                setPosts(result.payload.data || []);
+                console.log(result.payload.data);
+            } catch (err) {
+                setRetry((prev) => !prev);
+            }
+        };
+        getforums();
+    }, [retry]);
     const getforums = async () => {
         const response = await fetch(`http://localhost:8000/posts?category=${category}`); // get no need method cause fetch inherently already is get
         // fetch need
