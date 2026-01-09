@@ -118,7 +118,7 @@ const PostPage: React.FC = () => {
     const [post, setPost] = useState<Post>();
     const [downColor, setDownColor] = useState(false);
     const [upColor, setUpColor] = useState(false);
-    const [like, setLike] = useState(0);
+    const [like, setLike] = useState(null);
     const [refreshRetry, setRefreshRetry] = useState(0);
     const [fetchedLike, setFetchedLike] = useState(false);
     useEffect(() => {
@@ -132,26 +132,31 @@ const PostPage: React.FC = () => {
                 const AccessToken = await RefreshAccessToken(refreshToken);
                 localStorage.setItem("accesstoken", AccessToken);
                 setToken(AccessToken);
-                const [postResponse, likeResponse] = await Promise.all([
-                    fetch(`http://localhost:8000/posts/${postID}`),
-                    fetch(`http://localhost:8000/like/${postID}`, {
+                if (!post) {
+                    const postResponse = await fetch(`http://localhost:8000/posts/${postID}`);
+                    const postData = await postResponse.json();
+                    if (postData.errorCode != 0) {
+                        throw new Error();
+                    }
+                    setPost(postData.payload.data);
+                }
+                if (!fetchedLike) {
+                    const likeResponse = await fetch(`http://localhost:8000/like/${postID}`, {
                         method: "GET",
                         headers: { "Content-Type": "application/json", Authorization: `Bearer ${AccessToken}` }, // sends json code// stringify the username to send json code, match json backend model
-                    }),
-                ]);
-                const post = await postResponse.json();
-                const likeValue = await likeResponse.json();
-                if (post.errorCode != 0 || likeValue.errorCode != 0) {
-                    throw new Error();
-                }
-                setPost(post.payload.data);
-                setLike(likeValue.payload.data);
+                    });
+                    const likeValue = await likeResponse.json();
+                    if (likeValue.errorCode != 0) {
+                        throw new Error();
+                    }
+                    setLike(likeValue.payload.data);
 
-                console.log(likeValue.payload.data);
-                setFetchedLike(true);
+                    console.log(likeValue.payload.data);
+                    setFetchedLike(true);
+                }
             } catch (err) {
-                if (refreshRetry < 20) {
-                    setRefreshRetry((prev) => prev + 1);
+                if (refreshRetry < 60) {
+                    setTimeout(() => setRefreshRetry((prev) => prev + 1), 300);
                 } else {
                     setFail(true);
                 }
@@ -244,7 +249,9 @@ const PostPage: React.FC = () => {
                                 </Icon>
                             </Box>
                             <Box sx={{ display: "flex" }}>
-                                <Typography variant="body1">{post.content}</Typography>
+                                <Typography align="left" variant="body1" sx={{ mr: "-" }}>
+                                    {post.content}
+                                </Typography>
                             </Box>
                             <Box sx={{ display: "flex" }}>
                                 <IconButton disableRipple>

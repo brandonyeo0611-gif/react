@@ -1,4 +1,5 @@
 import { GetProfilePic } from "../../../components/GetProfilePic";
+import { RefreshAccessToken } from "../../../components/RenewAccessToken";
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -12,13 +13,14 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Avatar } from "@mui/material/";
+import type { AvatarProps } from "@mui/material/Avatar";
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -44,6 +46,39 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
     alignItems: "center",
     justifyContent: "center",
 }));
+const Avatars: React.FC<{ username: string } & AvatarProps> = ({ username }) => {
+    const [profileUrl, setProfileUrl] = useState<string | null>(null);
+    const [retry, setRetry] = useState(0);
+    const [fail, setFail] = useState(false);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const profile_url = await GetProfilePic(username);
+                if (typeof profile_url !== "string") {
+                    throw new Error();
+                }
+
+                if (typeof profile_url === "string") {
+                    setProfileUrl(profile_url);
+                }
+            } catch (err) {
+                if (retry < 5) {
+                    setRetry((prev) => prev + 1);
+                } else {
+                    setFail(true);
+                }
+            }
+        };
+        fetchProfile();
+    }, [username, retry]);
+
+    if (fail) {
+        return <Avatar></Avatar>;
+    }
+    if (profileUrl) {
+        return <Avatar src={profileUrl}></Avatar>;
+    }
+};
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: "inherit",
@@ -60,26 +95,30 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-    const [profileUrl, setProfileUrl] = React.useState<string | null>(null);
-    const [retry, setRetry] = useState(true);
+    const refreshToken = localStorage.getItem("refreshtoken");
+    const [AccessToken, setAccessToken] = useState(localStorage.getItem("accesstoken"));
+    if (refreshToken) {
+        const accessToken = RefreshAccessToken(refreshToken);
+        console.log(accessToken);
+    }
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const username = localStorage.getItem("username");
-                if (username) {
-                    const profile_url = await GetProfilePic(username);
-                    if (typeof profile_url !== "string") {
-                        throw new Error();
-                    }
-                    setProfileUrl(profile_url);
-                }
-            } catch (err) {
-                setRetry((prev) => !prev);
+        const refresh = async () => {
+            const refreshToken = localStorage.getItem("refreshtoken");
+            if (!refreshToken) {
+                navigate("/"); // redirect if no refresh token
+                return;
             }
+            const token = await RefreshAccessToken(refreshToken);
+            localStorage.setItem("accesstoken", token);
+            setAccessToken(AccessToken);
         };
-        fetchProfile();
-    }, [retry]);
+        refresh();
+    }, []);
 
+    const username = localStorage.getItem("username");
+    if (!username) {
+        return;
+    }
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -127,7 +166,7 @@ export default function PrimarySearchAppBar() {
         const response = await fetch("http://localhost:8000/users/profile_pic", {
             method: "PUT", // sends json code
             body: JSON.stringify({ profile_url }),
-            headers: { "Content-Type": "application/json" }, // stringify the username to send json code, match json backend model
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${AccessToken}` }, // stringify the username to send json code, match json backend model
         });
         const Data = await response.json();
         if (Data.errorCode != 0) {
@@ -208,20 +247,15 @@ export default function PrimarySearchAppBar() {
                     aria-haspopup="true"
                     color="inherit"
                 >
-                    {profileUrl ? (
-                        <img
-                            src={profileUrl}
-                            alt="profile"
-                            style={{
-                                width: 32,
-                                height: 32,
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                            }}
-                        />
-                    ) : (
-                        <AccountCircle />
-                    )}
+                    <Avatars
+                        style={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                        }}
+                        username={username}
+                    ></Avatars>
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
@@ -239,7 +273,6 @@ export default function PrimarySearchAppBar() {
             </MenuItem>
         </Menu>
     );
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -277,20 +310,15 @@ export default function PrimarySearchAppBar() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            {profileUrl ? (
-                                <img
-                                    src={profileUrl}
-                                    alt="profile"
-                                    style={{
-                                        width: 32,
-                                        height: 32,
-                                        borderRadius: "50%",
-                                        objectFit: "cover",
-                                    }}
-                                />
-                            ) : (
-                                <AccountCircle />
-                            )}
+                            <Avatars
+                                style={{
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                }}
+                                username={username}
+                            ></Avatars>
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: "flex", md: "none" } }}>

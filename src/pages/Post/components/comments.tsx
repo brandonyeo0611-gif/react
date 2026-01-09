@@ -62,10 +62,9 @@ const Avatars: React.FC<{ username: string }> = ({ username }) => {
     }
 };
 export default function BasicStack({ postID }: BasicStackProps) {
-    const [retry, setRetry] = useState(true);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [comments, setComments] = React.useState<Comment[]>([]);
-    const getComments = async () => {
+    const getComments = async (x = 1) => {
         try {
             const response = await fetch(`http://localhost:8000/comments?post=${postID}`); // get no need method cause fetch inherently already is get
             // fetch need
@@ -76,13 +75,16 @@ export default function BasicStack({ postID }: BasicStackProps) {
             setComments(result.payload.data || []);
             console.log(result.payload.data);
         } catch (err) {
-            setRetry((prev) => !prev);
+            if (x < 10) {
+                x += 1;
+                setTimeout(() => getComments(), 1000);
+            }
         }
     };
 
     useEffect(() => {
         getComments();
-    }, [postID, retry]);
+    }, [postID]);
     return (
         <Box sx={{ width: "100%" }}>
             <Stack spacing={2}>
@@ -94,7 +96,10 @@ export default function BasicStack({ postID }: BasicStackProps) {
                                 <Typography sx={{ mt: 1, ml: 2 }}>{c.username}</Typography>
                             </Box>
                             <Box sx={{ display: "flex" }}>
-                                <Typography sx={{ mt: 1, ml: 2, wordWrap: "break-word", wordBreak: "break-word" }}>
+                                <Typography
+                                    align="left"
+                                    sx={{ mt: 1, ml: 2, wordWrap: "break-word", wordBreak: "break-word" }}
+                                >
                                     {c.content}
                                 </Typography>
                             </Box>
