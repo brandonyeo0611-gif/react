@@ -99,29 +99,17 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 const PostPage: React.FC = () => {
-    const [fail, setFail] = useState(false);
-    const navigate = useNavigate();
-    const { postID } = useParams<{ postID: string }>();
-    const post_id = postID;
-    const [token, setToken] = useState<string | null>(null);
-    const handleLikePost = async (likeValue: number) => {
-        // using an argument reduces the need to useState to control the state
-        const response = await fetch("http://localhost:8000/posts", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code
-            body: JSON.stringify({ like_value: likeValue, post_id }), // stringify the username to send json code, match json backend model
-        });
-        const res = await response.json();
-        if (res.errorCode == 0) {
-            return;
-        }
-    };
     const [post, setPost] = useState<Post>();
     const [downColor, setDownColor] = useState(false);
     const [upColor, setUpColor] = useState(false);
     const [like, setLike] = useState(null);
     const [refreshRetry, setRefreshRetry] = useState(0);
     const [fetchedLike, setFetchedLike] = useState(false);
+    const [fail, setFail] = useState(false);
+    const navigate = useNavigate();
+    const { postID } = useParams<{ postID: string }>();
+    const post_id = postID;
+    const [token, setToken] = useState<string | null>(null);
     useEffect(() => {
         const refresh = async () => {
             try {
@@ -131,6 +119,10 @@ const PostPage: React.FC = () => {
                     return;
                 }
                 const AccessToken = await RefreshAccessToken(refreshToken);
+                if (AccessToken === 401 || AccessToken === 402) {
+                    navigate("/");
+                    return;
+                }
                 localStorage.setItem("accesstoken", AccessToken);
                 setToken(AccessToken);
                 if (!post) {
@@ -166,6 +158,27 @@ const PostPage: React.FC = () => {
 
         refresh();
     }, [refreshRetry, postID]);
+    const handleLikePost = async (likeValue: number) => {
+        // using an argument reduces the need to useState to control the state
+        const response = await fetch("http://localhost:8000/posts", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code
+            body: JSON.stringify({ like_value: likeValue, post_id }), // stringify the username to send json code, match json backend model
+        });
+        if (response.status === 401) {
+            // unauthorized → navigate home
+            navigate("/");
+            return;
+        }
+        const res = await response.json();
+        if (res.errorCode == 0) {
+            return;
+        }
+        if (res.error == "Invalid token") {
+            navigate("/");
+            return;
+        }
+    };
     const changeDownvote = () => {
         const vote = downColor ? 0 : -1;
         setDownColor((prev) => !prev);

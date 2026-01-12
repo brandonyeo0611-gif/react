@@ -8,8 +8,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Fab, FormControl, InputLabel, MenuItem } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import Select from "@mui/material/Select";
+import { useNavigate } from "react-router-dom";
 import type { SelectChangeEvent } from "@mui/material/Select";
-
 // if its a tsx type u need to remember to add a type in front, not sure why the mui doesnt address it..
 
 type CreatePostProps = {
@@ -32,6 +32,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ username }) => {
     const handleClose = () => {
         setOpen(false);
     };
+    const navigate = useNavigate();
 
     return (
         <React.Fragment>
@@ -68,6 +69,11 @@ const CreatePost: React.FC<CreatePostProps> = ({ username }) => {
                             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code
                             body: JSON.stringify({ title, username, content, content_type }), // stringify the username to send json code, match json backend model
                         });
+                        if (response.status === 401) {
+                            // unauthorized → navigate home
+                            navigate("/");
+                            return;
+                        }
                         const data = await response.json();
                         if (data.errorCode === 0) {
                             alert("Create post successful");

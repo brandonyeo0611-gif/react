@@ -109,6 +109,10 @@ export default function PrimarySearchAppBar() {
                 return;
             }
             const token = await RefreshAccessToken(refreshToken);
+            if (token === 401 || token === 402) {
+                navigate("/"); // redirect if no refresh token
+                return;
+            }
             localStorage.setItem("accesstoken", token);
             setAccessToken(AccessToken);
         };

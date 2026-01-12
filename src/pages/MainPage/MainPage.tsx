@@ -18,6 +18,7 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
     const navigate = useNavigate()
     const [category, setCategory] = useState("Technology");
     const refreshToken = localStorage.getItem("refreshtoken")
+    const [accessToken, setAccessToken] = useState("")
     if (refreshToken) {
         const accessToken = RefreshAccessToken(refreshToken)
         console.log(accessToken)
@@ -29,30 +30,38 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
                 navigate("/"); // redirect if no refresh token
                 return;
             }
-            const AccessToken = await RefreshAccessToken(refreshToken);
-            localStorage.setItem("accesstoken", AccessToken);
+            const token = await RefreshAccessToken(refreshToken);
+            setAccessToken(token);
+            if (token === 401 || token === 402) {
+                navigate("/"); // redirect if no refresh token
+                return;
+            }
+            localStorage.setItem("accesstoken", token);
         };
         refresh();
     }, []);
-    return (
-        <Box sx={{ display: "flex" }}>
-            <CreatePost username={username}></CreatePost>
-            <DrawerLeft setCategory={setCategory}>
+    if (accessToken) {
+        return (
+            <Box sx={{ display: "flex" }}>
+                <CreatePost username={username}></CreatePost>
+                <DrawerLeft setCategory={setCategory}>
 
-            </DrawerLeft>
-            <Box sx={{ flexGrow: 1 }}>
+                </DrawerLeft>
+                <Box sx={{ flexGrow: 1 }}>
 
-                <PrimarySearchAppBar>
+                    <PrimarySearchAppBar>
 
-                </PrimarySearchAppBar>
-                <Box sx={{ p: 2 }}>
-                    <BasicStack category={category}></BasicStack>
+                    </PrimarySearchAppBar>
+                    <Box sx={{ p: 2 }}>
+                        <BasicStack category={category}></BasicStack>
+                    </Box>
                 </Box>
             </Box>
-        </Box>
 
 
-    );
+        );
+    }
+
 };
 
 export default MainPage;

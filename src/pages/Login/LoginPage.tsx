@@ -46,6 +46,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
             }
             const AccessToken = await RefreshAccessToken(refreshToken);
             localStorage.setItem("accesstoken", AccessToken);
+            if (AccessToken == 401 || AccessToken == 402) {
+                return;
+            }
             if (AccessToken) {
                 navigate("/main");
             }

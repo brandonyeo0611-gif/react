@@ -45,6 +45,10 @@ const HistoryPage: React.FC = () => {
                 return;
             }
             const AccessToken = await RefreshAccessToken(refreshToken);
+            if (AccessToken === 401 || AccessToken === 402) {
+                navigate("/");
+                return;
+            }
             localStorage.setItem("accesstoken", AccessToken);
         };
         refresh();
@@ -116,7 +120,7 @@ const HistoryPage: React.FC = () => {
                     </AppBar>
                     <Box sx={{ mx: "auto", width: "80%" }}>
                         <Toolbar></Toolbar>
-                        <Typography variant="h4" sx={{ mb: 1, mt: 2}}>{username}{`'`}s history</Typography>
+                        <Typography variant="h4" sx={{ mb: 1, mt: 2 }}>{username}{`'`}s history</Typography>
                         <Box alignItems="left" sx={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-start" }}>
                             <FormControl
                                 sx={{
