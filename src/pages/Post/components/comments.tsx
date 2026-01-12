@@ -5,7 +5,8 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import { Typography, Avatar } from "@mui/material";
+import { Typography, Avatar, Link } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -62,6 +63,7 @@ const Avatars: React.FC<{ username: string }> = ({ username }) => {
     }
 };
 export default function BasicStack({ postID }: BasicStackProps) {
+    const navigate = useNavigate();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [comments, setComments] = React.useState<Comment[]>([]);
     const getComments = async (x = 1) => {
@@ -93,7 +95,19 @@ export default function BasicStack({ postID }: BasicStackProps) {
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Box sx={{ display: "flex" }}>
                                 <Avatars username={c.username}></Avatars>
-                                <Typography sx={{ mt: 1, ml: 2 }}>{c.username}</Typography>
+                                <Link
+                                    onClick={() => {
+                                        navigate(`/history/${c.username}`);
+                                    }}
+                                    variant="body1"
+                                    mt={2}
+                                    position="static"
+                                    sx={{ marginLeft: 1, cursor: "pointer" }}
+                                    underline="none"
+                                    color="inherit"
+                                >
+                                    {c.username}
+                                </Link>
                             </Box>
                             <Box sx={{ display: "flex" }}>
                                 <Typography

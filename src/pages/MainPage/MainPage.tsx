@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 
-import BasicStack from "./components/Forums";
-import DrawerLeft from "./components/DrawerLeft";
-import CreatePost from "./components/CreatePost";
-import PrimarySearchAppBar from "./components/SearchBar";
+import DrawerLeft from "../../components/DrawerLeft";
+import CreatePost from "../../components/CreatePost";
+import BasicStack from "../../components/Forums";
+import PrimarySearchAppBar from "../../components/SearchBar";
 import { RefreshAccessToken } from "../../components/RenewAccessToken";
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";

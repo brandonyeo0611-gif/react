@@ -19,6 +19,7 @@ import {
     Toolbar,
     IconButton,
     Button,
+    Link,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -210,7 +211,7 @@ const PostPage: React.FC = () => {
                             <IconButton
                                 color="inherit"
                                 onClick={() => {
-                                    navigate("/main");
+                                    navigate(-1);
                                 }}
                                 sx={{ ml: -3 }}
                             >
@@ -236,9 +237,19 @@ const PostPage: React.FC = () => {
                         <Item>
                             <Box sx={{ display: "flex", marginBottom: 2 }}>
                                 <Avatars username={post.username}></Avatars>
-                                <Typography variant="body1" mt={2} position="static" sx={{ marginLeft: 1 }}>
+                                <Link
+                                    onClick={() => {
+                                        navigate(`/history/${post.username}`);
+                                    }}
+                                    variant="body1"
+                                    mt={2}
+                                    position="static"
+                                    sx={{ marginLeft: 1, cursor: "pointer" }}
+                                    underline="none"
+                                    color="inherit"
+                                >
                                     {post.username}
-                                </Typography>
+                                </Link>
                             </Box>
                             <Box sx={{ display: "flex", marginBottom: 1 }}>
                                 <Typography sx={{ display: "flex" }} variant="subtitle1" fontWeight="bold">

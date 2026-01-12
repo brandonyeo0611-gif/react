@@ -1,5 +1,5 @@
-import { GetProfilePic } from "../../../components/GetProfilePic";
-import { RefreshAccessToken } from "../../../components/RenewAccessToken";
+import { GetProfilePic } from "./GetProfilePic";
+import { RefreshAccessToken } from "./RenewAccessToken";
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -16,7 +16,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { Logout } from "@mui/icons-material";
+import { HistoryOutlined, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Avatar } from "@mui/material/";
@@ -140,6 +140,9 @@ export default function PrimarySearchAppBar() {
 
     const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setMobileMoreAnchorEl(event.currentTarget);
+    };
+    const handleHistory = () => {
+        navigate(`/history/${username}`);
     };
 
     const handleLogOut = () => {
@@ -270,6 +273,14 @@ export default function PrimarySearchAppBar() {
                     <Logout></Logout>
                 </IconButton>
                 <p>Logout</p>
+            </MenuItem>
+            <MenuItem onClick={handleHistory}>
+                <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+                    <Badge badgeContent={17} color="error">
+                        <HistoryOutlined />
+                    </Badge>
+                </IconButton>
+                <p>History</p>
             </MenuItem>
         </Menu>
     );

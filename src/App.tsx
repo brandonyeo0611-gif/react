@@ -4,6 +4,7 @@ import StyledThreadView from "./pages/StyledThreadView";
 import MainPage from "./pages/MainPage/MainPage";
 import CreateUserPage from "./pages/CreateUserPage/CreateUserPage";
 import PostPage from "./pages/Post/PostPage";
+import HistoryPage from "./pages/History/HistoryPage";
 import React, { useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -30,6 +31,7 @@ const App: React.FC = () => {
                         <Route path="/main" element={<MainPage username={username} />} />
                         <Route path="/newuser" element={<CreateUserPage />} />
                         <Route path="/thread/:postID" element={<PostPage />} />
+                        <Route path="/history/:username" element={<HistoryPage />} />
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>
