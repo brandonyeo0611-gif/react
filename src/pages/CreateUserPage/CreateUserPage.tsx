@@ -19,7 +19,7 @@ const CreateUserPage: React.FC = () => {
         }
     };
     const nav = () => {
-        navigate("/login");
+        navigate("/");
     };
 
     return (
