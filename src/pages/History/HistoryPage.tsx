@@ -74,7 +74,7 @@ const HistoryPage: React.FC = () => {
         getforums();
     }, [retry]);
     const getforums = async () => {
-        const response = await fetch(`http://localhost:8000/history/${username}?relevance=${relevance}`); // get no need method cause fetch inherently already is get
+        const response = await fetch(`https://brandonwebforumgobackend.onrender.com/history/${username}?relevance=${relevance}`); // get no need method cause fetch inherently already is get
         // fetch need
         const result = await response.json();
         setPosts(result.payload.data || []);

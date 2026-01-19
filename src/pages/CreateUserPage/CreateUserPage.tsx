@@ -5,7 +5,7 @@ const CreateUserPage: React.FC = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const handleSubmit = async () => {
-        const response = await fetch("http://localhost:8000/users", {
+        const response = await fetch("https://brandonwebforumgobackend.onrender.com/users", {
             method: "POST",
             headers: { "Content-Type": "application/json" }, // sends json code
             body: JSON.stringify({ username }), // stringify the username to send json code

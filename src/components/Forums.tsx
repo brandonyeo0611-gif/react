@@ -49,7 +49,9 @@ export default function BasicStack({ category }: ForumsProps) {
         getforums();
     }, [retry]);
     const getforums = async () => {
-        const response = await fetch(`http://localhost:8000/posts?category=${category}&relevance=${relevance}`); // get no need method cause fetch inherently already is get
+        const response = await fetch(
+            `https://brandonwebforumgobackend.onrender.com/posts?category=${category}&relevance=${relevance}`,
+        ); // get no need method cause fetch inherently already is get
         // fetch need
         const result = await response.json();
         setPosts(result.payload.data || []);

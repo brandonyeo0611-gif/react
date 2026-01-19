@@ -170,7 +170,7 @@ export default function PrimarySearchAppBar() {
         const cloudData = await res.json();
         const profile_url = cloudData.secure_url;
 
-        const response = await fetch("http://localhost:8000/users/profile_pic", {
+        const response = await fetch("https://brandonwebforumgobackend.onrender.com/users/profile_pic", {
             method: "PUT", // sends json code
             body: JSON.stringify({ profile_url }),
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${AccessToken}` }, // stringify the username to send json code, match json backend model

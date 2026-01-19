@@ -64,7 +64,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ username }) => {
                         const title = formJson.title;
                         console.log(title);
                         const token = localStorage.getItem("accesstoken");
-                        const response = await fetch("http://localhost:8000/posts", {
+                        const response = await fetch("https://brandonwebforumgobackend.onrender.com/posts", {
                             method: "POST",
                             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code
                             body: JSON.stringify({ title, username, content, content_type }), // stringify the username to send json code, match json backend model

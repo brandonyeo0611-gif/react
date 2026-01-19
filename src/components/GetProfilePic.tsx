@@ -1,5 +1,5 @@
 export async function GetProfilePic(username: string) {
-    const response = await fetch(`http://localhost:8000/users/profile_pic?username=${username}`, {
+    const response = await fetch(`https://brandonwebforumgobackend.onrender.com/users/profile_pic?username=${username}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

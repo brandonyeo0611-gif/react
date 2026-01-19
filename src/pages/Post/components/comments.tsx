@@ -68,7 +68,7 @@ export default function BasicStack({ postID }: BasicStackProps) {
     const [comments, setComments] = React.useState<Comment[]>([]);
     const getComments = async (x = 1) => {
         try {
-            const response = await fetch(`http://localhost:8000/comments?post=${postID}`); // get no need method cause fetch inherently already is get
+            const response = await fetch(`https://brandonwebforumgobackend.onrender.com/comments?post=${postID}`); // get no need method cause fetch inherently already is get
             // fetch need
             const result = await response.json();
             if (result.errorCode != 0) {

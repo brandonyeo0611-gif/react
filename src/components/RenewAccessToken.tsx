@@ -1,5 +1,5 @@
 export async function RefreshAccessToken(refreshToken: string) {
-    const response = await fetch("http://localhost:8000/RefreshAccessToken", {
+    const response = await fetch("https://brandonwebforumgobackend.onrender.com/RefreshAccessToken", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${refreshToken}` },
     });

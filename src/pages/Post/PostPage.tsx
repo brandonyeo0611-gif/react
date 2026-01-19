@@ -126,7 +126,7 @@ const PostPage: React.FC = () => {
                 localStorage.setItem("accesstoken", AccessToken);
                 setToken(AccessToken);
                 if (!post) {
-                    const postResponse = await fetch(`http://localhost:8000/posts/${postID}`);
+                    const postResponse = await fetch(`https://brandonwebforumgobackend.onrender.com/posts/${postID}`);
                     const postData = await postResponse.json();
                     if (postData.errorCode != 0) {
                         throw new Error();
@@ -134,7 +134,7 @@ const PostPage: React.FC = () => {
                     setPost(postData.payload.data);
                 }
                 if (!fetchedLike) {
-                    const likeResponse = await fetch(`http://localhost:8000/like/${postID}`, {
+                    const likeResponse = await fetch(`https://brandonwebforumgobackend.onrender.com/like/${postID}`, {
                         method: "GET",
                         headers: { "Content-Type": "application/json", Authorization: `Bearer ${AccessToken}` }, // sends json code// stringify the username to send json code, match json backend model
                     });
@@ -160,7 +160,7 @@ const PostPage: React.FC = () => {
     }, [refreshRetry, postID]);
     const handleLikePost = async (likeValue: number) => {
         // using an argument reduces the need to useState to control the state
-        const response = await fetch("http://localhost:8000/posts", {
+        const response = await fetch("https://brandonwebforumgobackend.onrender.com/posts", {
             method: "PUT",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, // sends json code
             body: JSON.stringify({ like_value: likeValue, post_id }), // stringify the username to send json code, match json backend model

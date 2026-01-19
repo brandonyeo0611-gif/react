@@ -13,7 +13,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
     const navigate = useNavigate();
     // navigate pages in frontend
     const handleSubmit = async () => {
-        const response = await fetch("http://localhost:8000/login", {
+        const response = await fetch("https://brandonwebforumgobackend.onrender.com/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" }, // sends json code
             body: JSON.stringify({ username }), // stringify the username to send json code, match json backend model
