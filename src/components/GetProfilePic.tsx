@@ -1,8 +1,11 @@
 export async function GetProfilePic(username: string) {
-    const response = await fetch(`https://brandonwebforumgobackend.onrender.com/users/profile_pic?username=${username}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+        `https://brandonwebforumgobackend.onrender.com/users/profile_pic?username=${username}`,
+        {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        },
+    );
     const res = await response.json();
     if (res.errorCode === 5000) {
         console.log(5000);
