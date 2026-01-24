@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Box, Card, CardContent, Link, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const CreateUserPage: React.FC = () => {
@@ -21,6 +21,9 @@ const CreateUserPage: React.FC = () => {
     const nav = () => {
         navigate("/");
     };
+    useEffect(() => {
+        document.title = "new user | yap ";
+    }, []);
 
     return (
         <Box

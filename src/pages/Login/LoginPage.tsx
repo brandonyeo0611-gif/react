@@ -53,6 +53,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
                 navigate("/main");
             }
         };
+        document.title = "Login Page | yap ";
         refresh();
     }, []);
     return (

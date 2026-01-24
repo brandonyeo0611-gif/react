@@ -38,6 +38,7 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
             }
             localStorage.setItem("accesstoken", token);
         };
+        document.title = "Main Page | yap ";
         refresh();
     }, []);
     if (accessToken) {

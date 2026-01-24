@@ -51,6 +51,7 @@ const HistoryPage: React.FC = () => {
             }
             localStorage.setItem("accesstoken", AccessToken);
         };
+        document.title = "History | yap ";
         refresh();
     }, []);
     const Item = styled(Paper)(({ theme }) => ({

@@ -1,5 +1,5 @@
-import BasicStack from "./components/comments";
-import CreateComment from "./components/CreateComment";
+import CreateComment from "../../components/CreateComment";
+import BasicStack from "../../components/comments";
 import TechIcon from "../../images/Technology.png";
 import GamesIcon from "../../images/Games.png";
 import MusicIcon from "../../images/Music.png";
@@ -111,6 +111,7 @@ const PostPage: React.FC = () => {
     const post_id = postID;
     const [token, setToken] = useState<string | null>(null);
     useEffect(() => {
+        document.title = "Post | yap ";
         const refresh = async () => {
             try {
                 const refreshToken = localStorage.getItem("refreshtoken");
@@ -264,7 +265,7 @@ const PostPage: React.FC = () => {
                                     {post.username}
                                 </Link>
                             </Box>
-                            <Box sx={{ display: "flex", marginBottom: 1 }}>
+                            <Box sx={{ display: "flex", marginBottom: 1, overflow: "auto" }}>
                                 <Typography sx={{ display: "flex" }} variant="subtitle1" fontWeight="bold">
                                     {post.title}
                                 </Typography>
@@ -272,7 +273,7 @@ const PostPage: React.FC = () => {
                                     <img src={renderSwitch(post.content_type)} alt={post.content_type} width={32} />
                                 </Icon>
                             </Box>
-                            <Box sx={{ display: "flex" }}>
+                            <Box sx={{ display: "flex", overflow: "auto" }}>
                                 <Typography align="left" variant="body1" sx={{ mr: "-" }}>
                                     {post.content}
                                 </Typography>
