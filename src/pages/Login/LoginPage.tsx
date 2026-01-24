@@ -19,6 +19,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
             body: JSON.stringify({ username }), // stringify the username to send json code, match json backend model
         });
         const res = await response.json();
+        if (res.errorCode != 0) {
+            alert("Login Failed: " + res.messages?.[0]);
+            return;
+        }
         const data = res.payload.data;
         const refreshToken = data.RefreshToken;
         // store the token locally
@@ -31,7 +35,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ username, setUsername }) => {
             setUsername(username);
             navigate("/main");
         } else {
-            alert("Login Failed: " + res.messages?.[0]); // remember in backend we did the messages so yea
+            alert("Login Failed: " + res.messages?.[0]);
+            return; // remember in backend we did the messages so yea
         }
     };
     const nav = () => {
