@@ -206,8 +206,9 @@ export default function PrimarySearchAppBar() {
             onClose={handleMenuClose}
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleHistory}>history</MenuItem>
             <MenuItem onClick={handleClickChangeProfilePic}>Change Profile Pic</MenuItem>
+            <MenuItem onClick={handleLogOut}>Logout</MenuItem>
             <input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileUpload}></input>
             <MenuItem></MenuItem>
         </Menu>

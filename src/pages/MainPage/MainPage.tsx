@@ -16,7 +16,7 @@ type MainPageProps = {
 const MainPage: React.FC<MainPageProps> = ({ username }) => {
     console.log(username)
     const navigate = useNavigate()
-    const [category, setCategory] = useState("Technology");
+    const [category, setCategory] = useState("All");
     const refreshToken = localStorage.getItem("refreshtoken")
     const [accessToken, setAccessToken] = useState("")
     if (refreshToken) {
